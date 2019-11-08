@@ -14,7 +14,7 @@ namespace CM.Text
     ///     This class provides methods to send text messages.
     /// </summary>
     [PublicAPI]
-    public class TextClient
+    public class TextClient : ITextClient
     {
         private static readonly Lazy<HttpClient> ClientSingletonLazy = new Lazy<HttpClient>();
         private readonly Guid _apiKey;
