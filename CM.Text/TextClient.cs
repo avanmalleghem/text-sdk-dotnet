@@ -16,9 +16,20 @@ namespace CM.Text
     [PublicAPI]
     public class TextClient : ITextClient
     {
+        private readonly string _businessMessagingGatewayJsonEndpoint;
         private static readonly Lazy<HttpClient> ClientSingletonLazy = new Lazy<HttpClient>();
         private readonly Guid _apiKey;
         private readonly HttpClient _httpClient;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TextClient" /> class.
+        /// </summary>
+        /// <param name="apiKey">The API key.</param>
+        /// <param name="businessMessagingGatewayJsonEndpoint">The Url of the Messaging gateway endpoint</param>
+        [PublicAPI]
+        public TextClient(Guid apiKey, string businessMessagingGatewayJsonEndpoint) : this(apiKey, businessMessagingGatewayJsonEndpoint, ClientSingletonLazy.Value)
+        {
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TextClient" /> class.
@@ -35,9 +46,21 @@ namespace CM.Text
         /// <param name="apiKey">The API key.</param>
         /// <param name="httpClient">An optional HTTP client.</param>
         [PublicAPI]
-        public TextClient(Guid apiKey, HttpClient httpClient)
+        public TextClient(Guid apiKey, HttpClient httpClient) : this(apiKey, Common.Constant.BusinessMessagingGatewayJsonEndpoint, httpClient)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TextClient" /> class.
+        /// </summary>
+        /// <param name="apiKey">The API key.</param>
+        /// <param name="businessMessagingGatewayJsonEndpoint">The Url of the Messaging gateway endpoint</param>
+        /// <param name="httpClient">An optional HTTP client.</param>
+        [PublicAPI]
+        public TextClient(Guid apiKey, string businessMessagingGatewayJsonEndpoint, HttpClient httpClient)
         {
             this._apiKey = apiKey;
+            this._businessMessagingGatewayJsonEndpoint = businessMessagingGatewayJsonEndpoint;
             this._httpClient = httpClient;
         }
 
@@ -70,7 +93,7 @@ namespace CM.Text
         {
             using (var request = new HttpRequestMessage(
                 HttpMethod.Post,
-                new Uri(Common.Constant.BusinessMessagingGatewayJsonEndpoint)
+                new Uri(_businessMessagingGatewayJsonEndpoint)
             ))
             {
                 request.Content = new StringContent(
