@@ -12,6 +12,14 @@ namespace CM.Text
     public class TextClientMessageDetail
     {
         /// <summary>
+        ///     Message status code.
+        /// </summary>
+        /// <value>
+        ///     The status code.
+        /// </value>
+        public TextClientStatusCode statusCode { get; set; }
+
+        /// <summary>
         ///     Message details.
         /// </summary>
         /// <value>

@@ -69,7 +69,8 @@ namespace CM.Text.BusinessMessaging
                             status = message.status,
                             to = message.to,
                             parts = message.parts,
-                            details = message.messageDetails
+                            details = message.messageDetails,
+                            statusCode = (TextClientStatusCode) message.messageErrorCode
                         }
                     )
                     .ToArray()

@@ -24,7 +24,7 @@ namespace CM.Text.BusinessMessaging.Model
             internal string messageDetails { get; set; }
 
             [JsonProperty]
-            internal string messageErrorCode { get; set; }
+            internal int messageErrorCode { get; set; }
 
             [JsonProperty]
             internal int parts { get; set; }
