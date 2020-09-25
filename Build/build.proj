@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    
+    Target "Build" : to build the solution
+
+  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <PropertyGroup>
+    <BuildConfiguration>Release</BuildConfiguration>
+    <SolutionFile>$(MSBuildProjectDirectory)\..\CM.Text.sln</SolutionFile>
+    <NuGetTool>$(MSBuildProjectDirectory)\NuGet.exe</NuGetTool>
+    <OutputDirectory>$(MSBuildProjectDirectory)\..\Output</OutputDirectory>
+    <NuGetOutputDirectory>$(OutputDirectory)\Nuget</NuGetOutputDirectory>
+	<DotnetDirectory>$(MSBuildProjectDirectory)\Tools\dotnet</DotnetDirectory>
+  </PropertyGroup>
+  
+  <!-- Build all projects -->
+  <Target Name="Build" DependsOnTargets="Clean;BuildSolution;PrepareScriptsFiles;"/>
+  <!-- Releases a new version -->
+  <Target Name="Release" DependsOnTargets="Build;PackNuGetPackages;"/>
+  <Target Name="Clean" >
+    <RemoveDir Directories="$(OutputDirectory)"/>
+    <MakeDir Directories="$(OutputDirectory)"/>
+  </Target>
+  <!--
+    Nuget restore packages.
+  -->
+  <Target Name="NugetRestore" DependsOnTargets="">
+    <Message Text="++++++++++++++++++++++++++++++++" Importance="high"/>
+    <Message Text="NugetRestore" Importance="high"/>
+    <Message Text="++++++++++++++++++++++++++++++++" Importance="high"/>
+    <Exec Command='$(NuGetTool) restore $(SolutionFile)'/>
+  </Target>
+  <!--
+    Build the entire solution.
+  -->
+  <Target Name="BuildSolution" DependsOnTargets="NugetRestore">
+    <Message Text="++++++++++++++++++++++++++++++++" Importance="high"/>
+    <Message Text="BuildSolution" Importance="high"/>
+    <Message Text="++++++++++++++++++++++++++++++++" Importance="high"/>
+    <ItemGroup>
+      <ProjectToBuild Include="$(SolutionFile)">
+        <Properties>Configuration=$(BuildConfiguration);WarningLevel=0;</Properties>
+      </ProjectToBuild>
+    </ItemGroup>
+    <MSBuild Projects="@(ProjectToBuild)" Targets="Rebuild"/>
+  </Target>
+  
+  <Target Name="PrepareScriptsFiles">
+    <PropertyGroup>
+      <ScriptsOutputDirectory>$(OutputDirectory)\Scripts</ScriptsOutputDirectory>
+    </PropertyGroup>
+    <ItemGroup>
+      <!-- include all files/folders from Build folder -->
+      <ScriptsToCopy Include="$(MSBuildProjectDirectory)\..\Build\**\*.*" Exclude="$(OutputDirectory)"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(ScriptsToCopy)" DestinationFolder="$(ScriptsOutputDirectory)\%(ScriptsToCopy.RecursiveDir)"/>
+  </Target>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    #Region NuGet
+  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--
+    Pack NuGetPackages
+  -->
+  <Target Name="PackNuGetPackages">
+    <ItemGroup>
+      <NuGetProjects Include="$(MSBuildProjectDirectory)\..\CM.Text\CM.Text.csproj"/>
+    </ItemGroup>
+    <MakeDir Directories="$(NuGetOutputDirectory)"/>
+    <Exec Command="$(NuGetTool) pack &quot;%(NuGetProjects.Identity)&quot; -Build -Properties Configuration=$(BuildConfiguration) -IncludeReferencedProjects -OutputDirectory &quot;$(NuGetOutputDirectory)&quot; " WorkingDirectory="c:\temp\" ConsoleOutput="" />
+  </Target>
+</Project>

@@ -7,7 +7,7 @@ set BUILD_DIR=%~dp0
 REM ensure MSBuild is available
 if not exist %MSBUILD_EXE% call msbuild_not_found & pause & exit /b 1
 
-call %MSBUILD_EXE% %BUILD_DIR%build.proj /nologo /t:Release /verbosity:minimal
+call %MSBUILD_EXE% %BUILD_DIR%build.proj /nologo /t:Build /verbosity:minimal
 if errorlevel 1 call :deploy_error & pause & exit /b 1
 echo.
 echo Build and deploy finished successfully.
